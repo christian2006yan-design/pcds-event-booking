@@ -45,10 +45,13 @@ return;
 }
 
 /* ADMIN LOGIN */
+/* ADMIN LOGIN */
 if(u === "admin" && p === "admin123"){
 
 localStorage.setItem("currentUser","admin");
-window.location.href = "index.html";
+
+/* GO TO DASHBOARD */
+window.location.href = "dashboard.html";
 
 return;
 }
