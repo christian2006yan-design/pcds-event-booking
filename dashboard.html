@@ -51,30 +51,44 @@
 
 <script>
 
-function load(){
+async function load(){
 
-let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    const res = await fetch(
+        "http://localhost:3000/bookings"
+    );
 
-let pending = 0;
-let approved = 0;
-let completed = 0;
+    const bookings = await res.json();
 
-bookings.forEach((b)=>{
+    let pending = 0;
+    let approved = 0;
+    let completed = 0;
 
-if(b.status=="Pending") pending++;
-if(b.status=="Approved") approved++;
-if(b.status=="Completed") completed++;
+    bookings.forEach((b)=>{
 
-});
+        if(b.status=="Pending") pending++;
 
-document.getElementById("total").innerHTML = bookings.length;
-document.getElementById("pending").innerHTML = pending;
-document.getElementById("approved").innerHTML = approved;
-document.getElementById("completed").innerHTML = completed;
+        if(b.status=="Approved") approved++;
 
+        if(b.status=="Completed") completed++;
+
+    });
+
+    document.getElementById("total").innerHTML =
+        bookings.length;
+
+    document.getElementById("pending").innerHTML =
+        pending;
+
+    document.getElementById("approved").innerHTML =
+        approved;
+
+    document.getElementById("completed").innerHTML =
+        completed;
 }
 
 load();
+
+setInterval(load,3000);
 
 </script>
 
