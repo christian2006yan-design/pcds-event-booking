@@ -20,7 +20,7 @@
 
 <button onclick="login()">Login</button>
 
-<button class="secondary" onclick="window.location='register.html'">
+<button class="secondary" onclick="goRegister()">
 Create Account
 </button>
 
@@ -75,6 +75,10 @@ errorBox.innerHTML = "<div class='error'>Invalid Login</div>";
 }
 
 </script>
-
+<script>
+function goRegister() {
+  window.location.href = "register.html";
+}
+</script>
 </body>
 </html>
