@@ -45,12 +45,10 @@ return;
 }
 
 /* ADMIN LOGIN */
-/* ADMIN LOGIN */
 if(u === "admin" && p === "admin123"){
 
-localStorage.setItem("currentUser","admin");
-
-/* GO TO DASHBOARD */
+localStorage.setItem("loggedIn", "true");
+localStorage.setItem("currentUser", "admin");
 window.location.href = "index.html";
 
 return;
@@ -64,9 +62,8 @@ let found = users.find(x => x.username === u && x.password === p);
 
 if(found){
 
+localStorage.setItem("loggedIn", "true");
 localStorage.setItem("currentUser", u);
-
-/* USER PAGE */
 window.location.href = "guest.html";
 
 }else{
