@@ -15,7 +15,7 @@
 
 <a href="index.html">Dashboard</a>
 <a href="bookings.html">Bookings</a>
-<a href="login.html">Logout</a>
+<a href="#" onclick="logout()">Logout</a>
 
 </div>
 
@@ -65,6 +65,18 @@ bookings.filter(x=>x.status=="Approved").length;
 document.getElementById("completed").innerHTML =
 bookings.filter(x=>x.status=="Completed").length;
 
+</script>
+<script>
+  if (!localStorage.getItem("loggedIn")) {
+    window.location.replace("login.html");
+  }
+</script>
+<script>
+function logout() {
+  localStorage.removeItem("loggedIn");
+  localStorage.removeItem("currentUser");
+  window.location.href = "login.html";
+}
 </script>
 
 </body>
