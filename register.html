@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Register</title>
+<link rel="stylesheet" href="style.css">
+
+<!-- icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body class="login-body">
+
+<div class="box">
+
+<img src="PCDS.png" class="logo">
+
+<h2>Create Account</h2>
+
+<div id="msg"></div>
+
+<!-- USERNAME -->
+<div style="position:relative;">
+<i class="fa fa-user" style="position:absolute;left:12px;top:22px;color:#666;"></i>
+<input type="text" id="username" placeholder="Username" style="padding-left:35px;">
+</div>
+
+<!-- PASSWORD -->
+<div style="position:relative;">
+<i class="fa fa-lock" style="position:absolute;left:12px;top:22px;color:#666;"></i>
+<input type="password" id="password" placeholder="Password" style="padding-left:35px;">
+</div>
+
+<button onclick="register()">Register</button>
+
+<button class="secondary" onclick="window.location='login.html'">
+Back to Login
+</button>
+
+</div>
+
+<script>
+
+function register(){
+
+let u = username.value;
+let p = password.value;
+
+if(!u || !p){
+msg.innerHTML = "<div class='error'>Fill all fields</div>";
+return;
+}
+
+/* CONFIRM PROMPT */
+if(!confirm("Are you sure you want to create this account?")){
+return;
+}
+
+let users = JSON.parse(localStorage.getItem("users")) || [];
+
+/* CHECK EXISTING */
+let exists = users.find(x => x.username == u);
+
+if(exists){
+msg.innerHTML = "<div class='error'>Username Already Exists</div>";
+return;
+}
+
+/* SAVE USER */
+users.push({
+username:u,
+password:p
+});
+
+localStorage.setItem("users", JSON.stringify(users));
+
+msg.innerHTML = "<div class='success'>Registered Successfully</div>";
+
+
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Guest Booking</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="topbar">
+
+<div class="topbar-left">
+<img src="PCDS.png">
+<h2>PCDS Event Center</h2>
+</div>
+
+<a href="login.html" class="logout">Logout</a>
+
+</div>
+
+<div class="container">
+
+<div class="card">
+
+<h1>Create Booking</h1>
+
+<div id="msg"></div>
+
+<input type="text" id="booked_by" placeholder="Full Name">
+<input type="text" id="event_name" placeholder="Event Name">
+
+<div style="display:flex; gap:15px;">
+<div style="flex:1;">
+<label>Start</label>
+<input type="date" id="start_date">
+<input type="time" id="start_time">
+</div>
+
+<div style="flex:1;">
+<label>End</label>
+<input type="date" id="end_date">
+<input type="time" id="end_time">
+</div>
+</div>
+
+<select id="course">
+<option value="">Select Course</option>
+<option value="BSIT">BSIT</option>
+<option value="BSHM">BSHM</option>
+<option value="BSRT">BSRT</option>
+<option value="BSCRIM">BSCRIM</option>
+</select>
+
+<select id="role">
+<option value="Student">Student</option>
+<option value="Teacher">Teacher</option>
+</select>
+
+<button onclick="book()">Book Now</button>
+
+</div>
+
+<table>
+
+<thead>
+<tr>
+<th>Booking ID</th>
+<th>Booked By</th>
+<th>Event</th>
+<th>Start</th>
+<th>End</th>
+<th>Course</th>
+<th>Role</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody id="table"></tbody>
+
+</table>
+
+</div>
+
+<!-- CONFIRM MODAL -->
+<div id="confirmBox" style="
+display:none;
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,0.5);
+justify-content:center;
+align-items:center;
+">
+
+<div style="
+background:white;
+padding:20px;
+border-radius:10px;
+text-align:center;
+width:300px;
+">
+
+<h3>Confirm Booking</h3>
+<p>Are you sure you want to book this schedule?</p>
+
+<button onclick="confirmYes()" style="background:green;color:white;padding:10px;border:none;border-radius:6px;margin:5px;">
+Yes
+</button>
+
+<button onclick="confirmNo()" style="background:red;color:white;padding:10px;border:none;border-radius:6px;margin:5px;">
+No
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+function load(){
+
+let bookings =
+JSON.parse(localStorage.getItem("bookings")) || [];
+
+let table = document.getElementById("table");
+
+table.innerHTML = "";
+
+bookings.forEach(b=>{
+
+table.innerHTML += `
+<tr>
+<td>${b.id}</td>
+<td>${b.booked_by}</td>
+<td>${b.event}</td>
+<td>${b.start}</td>
+<td>${b.end}</td>
+<td>${b.course}</td>
+<td>${b.role}</td>
+<td>${b.status}</td>
+</tr>
+`;
+
+});
+
+}
+
+/* OPEN MODAL */
+function book(){
+document.getElementById("confirmBox").style.display = "flex";
+}
+
+/* CANCEL */
+function confirmNo(){
+document.getElementById("confirmBox").style.display = "none";
+}
+
+/* CONFIRM BOOK */
+function confirmYes(){
+
+document.getElementById("confirmBox").style.display = "none";
+
+let bookings =
+JSON.parse(localStorage.getItem("bookings")) || [];
+
+let booked_by = document.getElementById("booked_by").value;
+let event_name = document.getElementById("event_name").value;
+let start_date = document.getElementById("start_date").value;
+let start_time = document.getElementById("start_time").value;
+let end_date = document.getElementById("end_date").value;
+let end_time = document.getElementById("end_time").value;
+let course = document.getElementById("course").value;
+let role = document.getElementById("role").value;
+
+/* CHECK EMPTY */
+if(!booked_by || !event_name || !start_date || !start_time || !end_date || !end_time || !course){
+msg.innerHTML = "<div class='error'>Fill all fields</div>";
+return;
+}
+
+/* TIME */
+let newStart = new Date(start_date+" "+start_time).getTime();
+let newEnd = new Date(end_date+" "+end_time).getTime();
+
+/* INVALID */
+if(newEnd <= newStart){
+msg.innerHTML = "<div class='error'>Invalid Schedule</div>";
+return;
+}
+
+/* CONFLICT */
+for(let b of bookings){
+
+let oldStart = new Date(b.start).getTime();
+let oldEnd = new Date(b.end).getTime();
+
+if(newStart < oldEnd && newEnd > oldStart){
+msg.innerHTML = "<div class='error'>Schedule Conflict!</div>";
+return;
+}
+
+}
+
+/* ID */
+let id = "PCDS-" + String(bookings.length+1).padStart(3,"0");
+
+/* SAVE */
+bookings.push({
+id:id,
+booked_by:booked_by,
+event:event_name,
+start:start_date+" "+start_time,
+end:end_date+" "+end_time,
+course:course,
+role:role,
+status:"Pending"
+});
+
+localStorage.setItem("bookings", JSON.stringify(bookings));
+
+msg.innerHTML =
+"<div class='success'>Booking Successful! Your ID is: <b>" + id + "</b></div>";
+
+load();
+
+}
+
+load();
+
+</script>
+
+</body>
+</html>

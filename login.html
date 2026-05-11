@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="login-body">
+
+<div class="box">
+
+<img src="PCDS.png" class="logo">
+
+<h1>PCDS EVENT CENTER</h1>
+
+<div id="error"></div>
+
+<input type="text" id="username" placeholder="Username">
+<input type="password" id="password" placeholder="Password">
+
+<button onclick="login()">Login</button>
+
+<button class="secondary" onclick="window.location='register.html'">
+Create Account
+</button>
+
+</div>
+
+<script>
+
+function login(){
+
+let u = document.getElementById("username").value.trim();
+let p = document.getElementById("password").value.trim();
+
+let errorBox = document.getElementById("error");
+
+/* RESET ERROR */
+errorBox.innerHTML = "";
+
+/* EMPTY CHECK */
+if(u === "" || p === ""){
+errorBox.innerHTML = "<div class='error'>Please fill all fields</div>";
+return;
+}
+
+/* ADMIN LOGIN */
+if(u === "admin" && p === "admin123"){
+
+localStorage.setItem("currentUser","admin");
+window.location.href = "index.html";
+
+return;
+}
+
+/* GET USERS */
+let users = JSON.parse(localStorage.getItem("users")) || [];
+
+/* FIND USER */
+let found = users.find(x => x.username === u && x.password === p);
+
+if(found){
+
+localStorage.setItem("currentUser", u);
+
+/* USER PAGE */
+window.location.href = "guest.html";
+
+}else{
+
+errorBox.innerHTML = "<div class='error'>Invalid Login</div>";
+
+}
+
+}
+
+</script>
+
+</body>
+</html>

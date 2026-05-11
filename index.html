@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<img src="PCDS.png">
+
+<h2>ADMIN</h2>
+
+<a href="index.html">Dashboard</a>
+<a href="bookings.html">Bookings</a>
+<a href="login.html">Logout</a>
+
+</div>
+
+<div class="main">
+
+<h1>Dashboard</h1>
+
+<div class="grid">
+
+<div class="stat">
+<h2>Total</h2>
+<h1 id="total">0</h1>
+</div>
+
+<div class="stat">
+<h2>Pending</h2>
+<h1 id="pending">0</h1>
+</div>
+
+<div class="stat">
+<h2>Approved</h2>
+<h1 id="approved">0</h1>
+</div>
+
+<div class="stat">
+<h2>Completed</h2>
+<h1 id="completed">0</h1>
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+
+document.getElementById("total").innerHTML =
+bookings.length;
+
+document.getElementById("pending").innerHTML =
+bookings.filter(x=>x.status=="Pending").length;
+
+document.getElementById("approved").innerHTML =
+bookings.filter(x=>x.status=="Approved").length;
+
+document.getElementById("completed").innerHTML =
+bookings.filter(x=>x.status=="Completed").length;
+
+</script>
+
+</body>
+</html>

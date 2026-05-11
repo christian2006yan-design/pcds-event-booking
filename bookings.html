@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bookings</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<img src="PCDS.png">
+
+<h2>ADMIN</h2>
+
+<a href="index.html">Dashboard</a>
+<a href="bookings.html">Bookings</a>
+<a href="login.html">Logout</a>
+
+</div>
+
+<div class="main">
+
+<h1>Bookings Management</h1>
+
+<div class="card">
+
+<table>
+
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Event</th>
+<th>Start</th>
+<th>End</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="table"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<script>
+
+function load(){
+
+let bookings =
+JSON.parse(localStorage.getItem("bookings")) || [];
+
+let table = document.getElementById("table");
+
+table.innerHTML = "";
+
+bookings.forEach((b,i)=>{
+
+let actions = "";
+
+/* IF PENDING */
+if(b.status == "Pending"){
+actions = `
+<button class="approve" onclick="approve(${i})">Approve</button>
+<button class="disapprove" onclick="disapprove(${i})">Disapprove</button>
+`;
+}
+
+/* IF APPROVED OR DISAPPROVED */
+else if(b.status == "Approved" || b.status == "Disapproved"){
+actions = `
+<button class="done" onclick="done(${i})">Done</button>
+<button class="edit" onclick="editBooking(${i})">Edit</button>
+`;
+}
+
+/* IF COMPLETED */
+else{
+actions = "";
+
+}
+
+table.innerHTML += `
+<tr>
+
+<td>${b.id}</td>
+<td>${b.booked_by}</td>
+<td>${b.event}</td>
+<td>${b.start}</td>
+<td>${b.end}</td>
+
+<td>
+<span class="badge">${b.status}</span>
+</td>
+
+<td>
+${actions}
+<button class="delete" onclick="removeBooking(${i})">Delete</button>
+</td>
+
+</tr>
+`;
+
+});
+
+}
+
+/* APPROVE */
+function approve(i){
+let bookings = JSON.parse(localStorage.getItem("bookings"));
+bookings[i].status = "Approved";
+localStorage.setItem("bookings", JSON.stringify(bookings));
+load();
+}
+
+/* DISAPPROVE */
+function disapprove(i){
+let bookings = JSON.parse(localStorage.getItem("bookings"));
+bookings[i].status = "Disapproved";
+localStorage.setItem("bookings", JSON.stringify(bookings));
+load();
+}
+
+/* DONE */
+function done(i){
+let bookings = JSON.parse(localStorage.getItem("bookings"));
+bookings[i].status = "Completed";
+localStorage.setItem("bookings", JSON.stringify(bookings));
+load();
+}
+
+/* DELETE */
+function removeBooking(i){
+let bookings = JSON.parse(localStorage.getItem("bookings"));
+bookings.splice(i,1);
+localStorage.setItem("bookings", JSON.stringify(bookings));
+load();
+}
+
+/* EDIT */
+function editBooking(i){
+
+let bookings = JSON.parse(localStorage.getItem("bookings"));
+
+let newName = prompt("Edit Name:", bookings[i].booked_by);
+let newEvent = prompt("Edit Event:", bookings[i].event);
+
+if(newName) bookings[i].booked_by = newName;
+if(newEvent) bookings[i].event = newEvent;
+
+localStorage.setItem("bookings", JSON.stringify(bookings));
+load();
+
+}
+
+load();
+
+</script>
+
+</body>
+</html>
