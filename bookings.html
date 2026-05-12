@@ -49,115 +49,88 @@
 
 <script>
 
+const API = "https://pcds-event-booking-g83z.vercel.app";
+
+/* ===================== LOAD BOOKINGS ===================== */
 function load(){
 
-let bookings =
-JSON.parse(localStorage.getItem("bookings")) || [];
+fetch(`${API}/bookings`)
+.then(res => res.json())
+.then(bookings => {
 
 let table = document.getElementById("table");
-
 table.innerHTML = "";
 
-bookings.forEach((b,i)=>{
+bookings.forEach((b)=>{
 
 let actions = "";
 
-/* IF PENDING */
-if(b.status == "Pending"){
+/* PENDING */
+if(b.status === "Pending"){
 actions = `
-<button class="approve" onclick="approve(${i})">Approve</button>
-<button class="disapprove" onclick="disapprove(${i})">Disapprove</button>
+<button onclick="updateStatus(${b.id}, 'Approved')">Approve</button>
+<button onclick="updateStatus(${b.id}, 'Disapproved')">Disapprove</button>
 `;
 }
 
-/* IF APPROVED OR DISAPPROVED */
-else if(b.status == "Approved" || b.status == "Disapproved"){
+/* APPROVED / DISAPPROVED */
+else if(b.status === "Approved" || b.status === "Disapproved"){
 actions = `
-<button class="done" onclick="done(${i})">Done</button>
-<button class="edit" onclick="editBooking(${i})">Edit</button>
+<button onclick="updateStatus(${b.id}, 'Completed')">Done</button>
 `;
 }
 
-/* IF COMPLETED */
+/* COMPLETED */
 else{
 actions = "";
-
 }
 
 table.innerHTML += `
 <tr>
-
-<td>${b.id}</td>
+<td>${b.booking_id}</td>
 <td>${b.booked_by}</td>
-<td>${b.event}</td>
-<td>${b.start}</td>
-<td>${b.end}</td>
-
-<td>
-<span class="badge">${b.status}</span>
-</td>
-
+<td>${b.event_name}</td>
+<td>${b.start_date}</td>
+<td>${b.end_date}</td>
+<td>${b.status}</td>
 <td>
 ${actions}
-<button class="delete" onclick="removeBooking(${i})">Delete</button>
+<button onclick="deleteBooking(${b.id})">Delete</button>
 </td>
-
 </tr>
 `;
 
 });
 
-}
-
-/* APPROVE */
-function approve(i){
-let bookings = JSON.parse(localStorage.getItem("bookings"));
-bookings[i].status = "Approved";
-localStorage.setItem("bookings", JSON.stringify(bookings));
-load();
-}
-
-/* DISAPPROVE */
-function disapprove(i){
-let bookings = JSON.parse(localStorage.getItem("bookings"));
-bookings[i].status = "Disapproved";
-localStorage.setItem("bookings", JSON.stringify(bookings));
-load();
-}
-
-/* DONE */
-function done(i){
-let bookings = JSON.parse(localStorage.getItem("bookings"));
-bookings[i].status = "Completed";
-localStorage.setItem("bookings", JSON.stringify(bookings));
-load();
-}
-
-/* DELETE */
-function removeBooking(i){
-let bookings = JSON.parse(localStorage.getItem("bookings"));
-bookings.splice(i,1);
-localStorage.setItem("bookings", JSON.stringify(bookings));
-load();
-}
-
-/* EDIT */
-function editBooking(i){
-
-let bookings = JSON.parse(localStorage.getItem("bookings"));
-
-let newName = prompt("Edit Name:", bookings[i].booked_by);
-let newEvent = prompt("Edit Event:", bookings[i].event);
-
-if(newName) bookings[i].booked_by = newName;
-if(newEvent) bookings[i].event = newEvent;
-
-localStorage.setItem("bookings", JSON.stringify(bookings));
-load();
+});
 
 }
 
+/* ===================== UPDATE STATUS ===================== */
+function updateStatus(id, status){
+
+fetch(`${API}/status/${id}`, {
+method: "PUT",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ status })
+})
+.then(() => load());
+
+}
+
+/* ===================== DELETE BOOKING ===================== */
+function deleteBooking(id){
+
+fetch(`${API}/delete/${id}`, {
+method: "DELETE"
+})
+.then(() => load());
+
+}
+
+/* ===================== AUTO LOAD ===================== */
 load();
+setInterval(load, 3000);
 
 </script>
 
